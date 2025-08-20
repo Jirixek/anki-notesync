@@ -29,14 +29,14 @@ def col():
 class MockPopup():
     def __init__(self, return_value: str):
         self.return_value = return_value
-        self.n_called = 0
+        self._n_called = 0
 
     def __call__(self, _):
-        self.n_called += 1
+        self._n_called += 1
         return self.return_value
 
     def n_called(self):
-        return self.n_called
+        return self._n_called
 
 
 def test_download_single(col):
@@ -199,7 +199,7 @@ def test_no_change(col):
     assert bidir.sync_field(col, n2, 0, popup) is False
     load_notes((n1, n2))
 
-    assert popup.n_called == 0
+    assert popup.n_called() == 0
     assert n1['Front'] == '<span class="sync" sid="1">Original content</span>'
     assert n2['Front'] == '<span class="sync" sid="1">Original content</span>'
 
@@ -220,7 +220,7 @@ def test_empty_span_always_downloaded(col):
     assert bidir.sync_field(col, n1, 0, popup) is True
     load_notes((n1, n2))
 
-    assert popup.n_called == 0
+    assert popup.n_called() == 0
     assert n1['Front'] == '<span class="sync" sid="1">Original content</span>'
     assert n2['Front'] == '<span class="sync" sid="1">Original content</span>'
 
@@ -241,7 +241,7 @@ def test_change_popup(col):
     assert bidir.sync_field(col, n2, 0, popup) is True
     load_notes((n1, n2))
 
-    assert popup.n_called == 1
+    assert popup.n_called() == 1
 
 
 def test_span_coherency_homogenous(col):

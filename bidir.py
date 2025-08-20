@@ -29,7 +29,7 @@ Popup = Callable[[str], str]
 
 
 def default_popup(sid: str) -> str:
-    return askUserDialog(f'Span with sid {sid} has changed.', ('Upload', 'Download')).run()
+    return askUserDialog(f'Span with sid {sid} has changed.', ['Upload', 'Download']).run()
 
 
 def generate_sid(col: Collection, note: Note, field_idx: int) -> str:

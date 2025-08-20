@@ -246,9 +246,9 @@ def test_dont_change_spans_without_sync_class(col):
 class TestImEq():
     def fill_im_eq_note(self, note: Note, with_context: bool,
                         with_assumptions: bool, hint_fields: Sequence[str]):
-        hint_fields = set(hint_fields)
+        hint_fields_set: set[str] = set(hint_fields)
         for key in note.keys():
-            if key in hint_fields:
+            if key in hint_fields_set:
                 note[key] = f'{key}::Hint {key}'
             else:
                 note[key] = str(key)

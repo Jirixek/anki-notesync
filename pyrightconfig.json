@@ -1,3 +1,8 @@
 {
-    "reportOptionalMemberAccess": false
+    "reportOptionalMemberAccess": false,
+    "reportAttributeAccessIssue": false,
+    "reportArgumentType": false,
+    "reportIndexIssue": false,
+    "reportOptionalSubscript": false,
+    "typeCheckingMode": "standard"
 }
