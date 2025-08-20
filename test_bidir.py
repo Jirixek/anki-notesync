@@ -339,6 +339,48 @@ def test_id_missing_multiple_spans_in_note(col):
         f'<span class="sync" sid="{n1.id}_0_' + r'\d{4}' + '">Another</span>'
     ), n1['Front'])
 
+
+def test_span_containing_html_elements_1(col):
+    basic = col.models.by_name('Basic')
+
+    n1 = col.new_note(basic)
+    n1['Front'] = '<span class="sync" sid="1"><b>Original content</b></span>'
+    col.add_note(n1, 0)
+
+    n2 = col.new_note(basic)
+    n2['Front'] = '<span class="sync" sid="1">Original content</span>'
+    col.add_note(n2, 0)
+
+    popup = MockPopup('Download')
+
+    assert bidir.sync_field(col, n2, 0, popup) is True
+    load_notes((n1, n2))
+
+    assert popup.n_called() == 1
+    assert n1['Front'] == '<span class="sync" sid="1"><b>Original content</b></span>'
+    assert n2['Front'] == '<span class="sync" sid="1"><b>Original content</b></span>'
+
+
+def test_span_containing_html_elements_2(col):
+    basic = col.models.by_name('Basic')
+
+    n1 = col.new_note(basic)
+    n1['Front'] = '<span class="sync" sid="1">Before <b>Original content</b> After</span>'
+    col.add_note(n1, 0)
+
+    n2 = col.new_note(basic)
+    n2['Front'] = '<span class="sync" sid="1"><b>Original content</b></span>'
+    col.add_note(n2, 0)
+
+    popup = MockPopup('Upload')
+
+    assert bidir.sync_field(col, n1, 0, popup) is True
+    load_notes((n1, n2))
+
+    assert popup.n_called() == 1
+    assert n1['Front'] == '<span class="sync" sid="1">Before <b>Original content</b> After</span>'
+    assert n2['Front'] == '<span class="sync" sid="1">Before <b>Original content</b> After</span>'
+
 # TODO
 # def test_nested_spans():
 #     pass
