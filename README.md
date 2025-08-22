@@ -57,4 +57,17 @@ To reference the content on another note, insert the span block where necessary.
 ```
 
 The sync blocks are synchronized when the field is unfocused.
-In case of a conflict, a pop-up is shown requesting a resolution.
+In case of a conflict, either a pop-up is shown requesting a resolution,
+or the contents of a sync block are uploaded to other sync blocks in a collection.
+The behavior can be controlled by setting `bidir_unfocus_action` value in
+the plugin's config to `ask` or `upload`, respectively.
+
+### Example config
+
+Below is an example plugin config.
+
+```json
+{
+    "bidir_unfocus_action": "upload"
+}
+```
