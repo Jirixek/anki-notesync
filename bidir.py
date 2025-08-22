@@ -20,16 +20,23 @@ from typing import Callable, Sequence
 
 from anki.collection import Collection
 from anki.notes import Note, NoteId
+from aqt import mw
 from aqt.utils import askUserDialog
 from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning
 
 warnings.filterwarnings('ignore', category=MarkupResemblesLocatorWarning, module='bs4')
 
-Popup = Callable[[str], str]
+GetActionCb = Callable[[str], str]
 
 
-def default_popup(sid: str) -> str:
-    return askUserDialog(f'Span with sid {sid} has changed.', ['Upload', 'Download']).run()
+def default_get_action_cb(sid: str) -> str:
+    config = mw.addonManager.getConfig(__name__)
+    bidir_unfocus_action = config.get('bidir_unfocus_action', 'ask')
+
+    if bidir_unfocus_action == 'upload':
+        return 'Upload'
+    else:  # bidir_unfocus_action == 'ask'
+        return askUserDialog(f'Span with sid {sid} has changed.', ['Upload', 'Download']).run()
 
 
 def generate_sid(col: Collection, note: Note, field_idx: int) -> str:
@@ -91,7 +98,7 @@ def download(col: Collection, nid: NoteId, sid: int):
 
 
 def sync_field(col: Collection, this_note: Note, field_idx: int,
-               popup: Popup = default_popup) -> bool:
+               get_action_cb: GetActionCb = default_get_action_cb) -> bool:
     if this_note.id == 0:
         return False  # the card is being created
     if field_idx < 0 or field_idx >= len(this_note.values()):
@@ -115,14 +122,14 @@ def sync_field(col: Collection, this_note: Note, field_idx: int,
             continue
 
         if len(span.contents) == 0:
-            answer = 'Download'
+            action = 'Download'
         else:
-            answer = popup(sid)
+            action = get_action_cb(sid)
 
         if this_note.id in nids:
             nids.remove(this_note.id)
 
-        if answer == 'Upload':
+        if action == 'Upload':
             upload(col, nids, span)
         else:
             # Idx 0 will always exist. If len(nids) == 1, spans are always coherent
