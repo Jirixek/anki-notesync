@@ -51,7 +51,7 @@ jobs:
           pytest
 
       - name: Create ankiaddon
-        if: startsWith(github.ref, 'refs/tags/')
+        # if: startsWith(github.ref, 'refs/tags/')
         run: |
           zip -r notesync-${{ github.ref_name }}.ankiaddon --exclude __pycache__ --exclude meta.json *
 
