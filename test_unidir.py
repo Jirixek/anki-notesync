@@ -445,3 +445,28 @@ def test_cycles(col):
 
     assert n1['Text'] == f'Before1 <span class="sync" note="{n2.id}"><div>Cycle detected</div></span> After1'
     assert n2['Text'] == f'Before2 <span class="sync" note="{n1.id}"><div>Cycle detected</div></span> After2'
+
+
+def test_span_containing_html_elements(col):
+    basic = col.models.by_name('Basic')
+
+    n1 = col.new_note(basic)
+    n1['Front'] = 'Front1 <b>Front bold</b> Front2'
+    n1['Back'] = 'Back1 <b>Back bold</b> Back2'
+    col.add_note(n1, 0)
+
+    n2 = col.new_note(basic)
+    n2['Front'] = f'<span class="sync" note="{n1.id}"></span>'
+    col.add_note(n2, 0)
+
+    assert unidir.sync_field(col, n2, 0) is True
+    load_notes((n1, n2))
+
+    assert n2['Front'] == (
+        f'<span class="sync" note="{n1.id}">\n'
+        '<div>\n'
+        '  Front1 <b>Front bold</b> Front2\n'
+        '  <hr>\n'
+        '  Back1 <b>Back bold</b> Back2\n'
+        '</div>\n'
+        '</span>')

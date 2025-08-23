@@ -45,16 +45,16 @@ def are_spans_coherent(col: Collection, nids: Sequence[NoteId], sid: int) -> boo
     if len(nids) <= 1:
         return True
 
-    span_str = None
+    first_span = None
     for nid in nids:
         note = col.get_note(nid)
         for field_val in note.values():
             bs = BeautifulSoup(field_val, 'html.parser')
             spans = bs.find_all('span', {'class': 'sync', 'sid': sid}, recursive=False)
             for span in spans:
-                if span_str is None:
-                    span_str = span.string if span.string is not None else ''
-                elif span_str != span.string:
+                if first_span is None:
+                    first_span = span
+                elif first_span != span:
                     return False
     return True
 
@@ -114,7 +114,7 @@ def sync_field(col: Collection, this_note: Note, field_idx: int,
         if are_spans_coherent(col, nids, sid):
             continue
 
-        if span.string is None:
+        if len(span.contents) == 0:
             answer = 'Download'
         else:
             answer = popup(sid)
