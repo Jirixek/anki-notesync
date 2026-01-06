@@ -238,12 +238,12 @@ def sync_note(col: Collection, note: Note) -> bool:
     return changed
 
 
-def sync_all() -> int:
+def sync_all(col: Collection) -> int:
     n_changed = 0
-    ids = mw.col.find_notes('<span class=\\"sync\\" note=')
+    ids = col.find_notes('"*:*<span class=\\"sync\\" note=*"')
     for note_id in ids:
-        note = mw.col.get_note(note_id)
-        changed = sync_note(mw.col, note)
+        note = col.get_note(note_id)
+        changed = sync_note(col, note)
         if changed:
             n_changed += 1
     return n_changed

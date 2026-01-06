@@ -48,6 +48,25 @@ def _create_custom_notes(col: Collection):
         models.add_dict(model)
 
 
+def _create_note_with_field_excluded_from_unqualified_search(col: Collection):
+    models = col.models
+    model = models.new('Basic (with back excluded from unqualified search)')
+    template = models.new_template('Template 1')
+
+    front_field = models.new_field('Front')
+    back_field = models.new_field('Back')
+    back_field["excludeFromSearch"] = True
+
+    models.add_field(model, front_field)
+    models.add_field(model, back_field)
+
+    template["qfmt"] = '{{ Front }}'
+    template["afmt"] = '{{ Front }} | {{ Back }}'
+
+    models.add_template(model, template)
+    models.add_dict(model)
+
+
 def get_empty_col():
     global _empty_col
     if not _empty_col:
@@ -56,6 +75,7 @@ def get_empty_col():
         os.unlink(path)
         col = Collection(path)
         _create_custom_notes(col)
+        _create_note_with_field_excluded_from_unqualified_search(col)
         col.close(downgrade=False)
         _empty_col = path
     (fd, path) = tempfile.mkstemp(suffix='.anki2')

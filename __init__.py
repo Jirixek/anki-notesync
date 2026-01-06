@@ -28,7 +28,7 @@ def on_editor_did_unfocus_field(changed: bool, note: Note, field_idx: int) -> bo
 
 
 def on_sync_will_start():
-    unidir.sync_all()
+    unidir.sync_all(mw.col)
 
 
 gui_hooks.editor_did_unfocus_field.append(on_editor_did_unfocus_field)
