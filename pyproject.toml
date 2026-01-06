@@ -1,0 +1,11 @@
+[project]
+name = "notesync"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "anki==24.6.3",
+    "aqt[qt6]==24.6.3",
+    "pytest==8.3.3",
+]
