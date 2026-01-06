@@ -43,7 +43,7 @@ def generate_sid(col: Collection, note: Note, field_idx: int) -> str:
     def generate_sid_internal():
         return f'{note.id}_{field_idx}_{randrange(0, 10000):04}'
     sid = generate_sid_internal()
-    while len(col.find_notes(f'sid="{sid}"')) > 0:
+    while len(col.find_notes(f'*:*sid="{sid}"*')) > 0:
         sid = generate_sid_internal()
     return sid
 
@@ -117,7 +117,7 @@ def sync_field(col: Collection, this_note: Note, field_idx: int,
             continue
 
         sid = span['sid']
-        nids = col.find_notes(f'<span class=\\"sync\\" sid=\\"{sid}\\">')
+        nids = col.find_notes(f'"*:*<span class=\\"sync\\" sid=\\"{sid}\\">*"')
         if are_spans_coherent(col, nids, sid):
             continue
 
