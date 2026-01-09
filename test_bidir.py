@@ -381,6 +381,24 @@ def test_span_containing_html_elements_2(col):
     assert n1['Front'] == '<span class="sync" sid="1">Before <b>Original content</b> After</span>'
     assert n2['Front'] == '<span class="sync" sid="1">Before <b>Original content</b> After</span>'
 
+
+def test_field_excluded_from_unqualified_search(col):
+    basic = col.models.by_name('Basic (with back excluded from unqualified search)')
+
+    n1 = col.new_note(basic)
+    n1['Back'] = '<span class="sync" sid="1">Original content</span>'
+    col.add_note(n1, 0)
+
+    n2 = col.new_note(basic)
+    n2['Back'] = '<span class="sync" sid="1">New content</span>'
+    col.add_note(n2, 0)
+
+    assert bidir.sync_field(col, n2, 1, MockPopup('Download')) is True
+    load_notes((n1, n2))
+
+    assert n1['Back'] == '<span class="sync" sid="1">Original content</span>'
+    assert n2['Back'] == '<span class="sync" sid="1">Original content</span>'
+
 # TODO
 # def test_nested_spans():
 #     pass

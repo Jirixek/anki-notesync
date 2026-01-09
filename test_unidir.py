@@ -470,3 +470,27 @@ def test_span_containing_html_elements(col):
         '  Back1 <b>Back bold</b> Back2\n'
         '</div>\n'
         '</span>')
+
+
+def test_field_excluded_from_unqualified_search(col):
+    basic = col.models.by_name('Basic (with back excluded from unqualified search)')
+
+    n1 = col.new_note(basic)
+    n1['Back'] = 'Text on the back'
+    col.add_note(n1, 0)
+
+    n2 = col.new_note(basic)
+    n2['Back'] = f'<span class="sync" note="{n1.id}"></span>'
+    col.add_note(n2, 0)
+
+    assert unidir.sync_all(col) == 1
+    load_notes((n1, n2))
+
+    assert n2['Back'] == (
+        f'<span class="sync" note="{n1.id}">\n'
+        '<div>\n'
+        '<hr>\n'
+        '  Text on the back\n'
+        '</div>\n'
+        '</span>'
+    )
